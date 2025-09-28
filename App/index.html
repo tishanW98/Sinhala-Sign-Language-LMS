@@ -1,0 +1,228 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script>
+      // === QUIZ + WS + CAMERA ===
+      const quizSigns = ["A", "Aa", "Aaa", "e", "Ee", "Unknown", "y"]; // ensure these match your model's action labels
++      let currentIndex = 0;
++      let score = 0;
++
+      // UI refs
+      const targetEl = document.getElementById("target");
+      const scoreEl = document.getElementById("score");
+      const totalEl = document.getElementById("total");
+      const quizStatus = document.getElementById("quizStatus");
+      const passBtn = document.getElementById("passBtn");
+
+      totalEl.innerText = quizSigns.length;
+
+      function setNextQuestion() {
+        if (currentIndex < quizSigns.length) {
+          targetEl.innerText = quizSigns[currentIndex];
+          quizStatus.innerText = "Show the sign!";
+        } else {
+          quizStatus.innerText = `\u2705 Quiz finished! Final Score: ${score}/${quizSigns.length}`;
+          targetEl.innerText = "-";
+        }
+      }
+
+      passBtn.onclick = () => {
+        // allow user to skip if stuck
+        if (currentIndex < quizSigns.length) {
+          currentIndex++;
+          setNextQuestion();
+        }
+      };
+
+      // Start the first question
+      setNextQuestion();
+
+      (async () => {
+        const video = document.getElementById("webcam");
+        const status = document.getElementById("status");
+        const predLabel = document.getElementById("predLabel");
+        const confText = document.getElementById("conf");
+        const probsDiv = document.getElementById("probs");
+
+        // configuration for quiz confirmation
++        const CONFIDENCE_THRESHOLD = 0.8; // per-frame confidence required
++        const CONFIRM_REQUIRED = 4; // consecutive frames required to accept answer
++        let confirmCount = 0;
++        let lastPred = null;
++        let isTransitioning = false; // prevents double-advances
++
+        // WebSocket to server
+        const WS_URL = "ws://localhost:8001/ws/predict"; // change if your server runs elsewhere
++        let ws;
++
+        function connectWS() {
+          ws = new WebSocket(WS_URL);
++          ws.onopen = () => { status.innerText = "WebSocket connected"; };
++          ws.onclose = () => { status.innerText = "WebSocket closed"; };
++          ws.onerror = (e) => { status.innerText = "WebSocket error"; console.error(e); };
++
++          ws.onmessage = (ev) => {
+            try {
+              const data = JSON.parse(ev.data);
++              if (!data) return;
++
+              // show prediction + confidence
++              const pred = data.predicted_action || '...';
++              const conf = typeof data.confidence === 'number' ? data.confidence : 0;
++              predLabel.innerText = pred;
++              confText.innerText = 'confidence: ' + conf.toFixed(2);
++
+              // update probability bars if provided
++              const probs = data.probs || {};
++              probsDiv.innerHTML = '';
++              Object.keys(probs).sort().forEach(k => {
++                const p = probs[k];
++                const wrapper = document.createElement('div');
++                wrapper.style.display = 'flex'; wrapper.style.alignItems = 'center'; wrapper.style.gap = '8px';
++                const label = document.createElement('div'); label.className = 'label'; label.style.width='80px'; label.innerText = k;
++                const bar = document.createElement('div'); bar.className = 'bar'; bar.style.flex='1';
++                const inner = document.createElement('div'); inner.className='bar-inner'; inner.style.width = Math.round(p*100) + '%';
++                bar.appendChild(inner);
++                const pct = document.createElement('div'); pct.style.width='40px'; pct.innerText = (p*100).toFixed(0) + '%';
++                wrapper.appendChild(label); wrapper.appendChild(bar); wrapper.appendChild(pct);
++                probsDiv.appendChild(wrapper);
++              });
++
++              // Quiz handling: require consecutive confirmations
++              if (currentIndex < quizSigns.length && !isTransitioning) {
++                const target = quizSigns[currentIndex];
++                if (pred === target && conf >= CONFIDENCE_THRESHOLD) {
++                  if (lastPred === pred) {
++                    confirmCount++;
++                  } else {
++                    confirmCount = 1;
++                    lastPred = pred;
++                  }
++                  quizStatus.innerText = `Hold steady... (${confirmCount}/${CONFIRM_REQUIRED})`;
++                  if (confirmCount >= CONFIRM_REQUIRED) {
++                    // accepted
++                    isTransitioning = true;
++                    score++;
++                    scoreEl.innerText = score;
++                    quizStatus.innerText = `\u2714 Correct! (${target})`;
++                    // small delay before next question so user sees feedback
++                    setTimeout(() => {
++                      currentIndex++;
++                      confirmCount = 0; lastPred = null; isTransitioning = false;
++                      setNextQuestion();
++                    }, 900);
++                  }
++                } else {
++                  // reset confirmation if wrong or low confidence
++                  if (confirmCount > 0) {
++                    confirmCount = 0; lastPred = null;
++                  }
++                  // show hint/status but don't spam
++                  if (pred !== '...') {
++                    quizStatus.innerText = `Try to match: ${target} — detected: ${pred} (${(conf*100).toFixed(0)}%)`;
++                  } else {
++                    quizStatus.innerText = `Show: ${target}`;
++                  }
++                }
++              }
++            } catch (err) { console.error('Invalid message', err); }
++          };
++        }
++
+        // start WS connection
++        connectWS();
++
+        // start webcam
++        try {
++          const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
++          video.srcObject = stream;
++        } catch (e) {
++          alert('Could not access webcam: ' + (e && e.message ? e.message : e));
++          return;
++        }
++
+        // prepare an offscreen canvas to capture frames and send over WS
++        const canvas = document.createElement('canvas');
++        const ctx = canvas.getContext('2d');
++        const SEND_EVERY_N = 2; let frameCounter = 0;
++
+        function captureAndSend() {
++          if (video.readyState < 2) { requestAnimationFrame(captureAndSend); return; }
++          const w = 320, h = 240; canvas.width = w; canvas.height = h; ctx.drawImage(video, 0, 0, w, h);
++          frameCounter++;
++          if (ws && ws.readyState === WebSocket.OPEN && frameCounter % SEND_EVERY_N === 0) {
++            canvas.toBlob((blob) => { if (!blob) return; const reader = new FileReader(); reader.onload = () => { try { ws.send(reader.result); } catch(e) { console.error('send error', e); } }; reader.readAsArrayBuffer(blob); }, 'image/jpeg', 0.7);
++          }
++          requestAnimationFrame(captureAndSend);
++        }
++
++        requestAnimationFrame(captureAndSend);
++      })();
+    </script>
+
+        // start webcam
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+          video.srcObject = stream;
+        } catch (e) {
+          alert("Could not access webcam: " + e.message);
+          return;
+        }
+
+        // prepare an offscreen canvas to capture frames
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // config
+        const SEND_EVERY_N = 2; // send every 2 frames (tweak)
+        let frameCounter = 0;
+
+        function captureAndSend() {
+          if (video.readyState < 2) {
+            requestAnimationFrame(captureAndSend);
+            return;
+          }
+          // pick size to reduce bandwidth
+          const w = 320,
+            h = 240;
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(video, 0, 0, w, h);
+          frameCounter++;
+          if (
+            ws.readyState === WebSocket.OPEN &&
+            frameCounter % SEND_EVERY_N === 0
+          ) {
+            // get JPEG blob
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) return;
+                // send as binary
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const arrayBuffer = reader.result;
+                  try {
+                    ws.send(arrayBuffer);
+                  } catch (e) {
+                    console.error("send error", e);
+                  }
+                };
+                reader.readAsArrayBuffer(blob);
+              },
+              "image/jpeg",
+              0.7
+            );
+          }
+          requestAnimationFrame(captureAndSend);
+        }
+
+        requestAnimationFrame(captureAndSend);
+      })();
+    </script>
+  </body>
+</html>
