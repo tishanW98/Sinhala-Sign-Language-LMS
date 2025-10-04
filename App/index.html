@@ -1,228 +1,900 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gesture Learning Quiz</title>
+    <style>
+      /* Copy everything between the <style> tags from index.html and paste it here */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 1400px;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 2.5em;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+}
+
+.quiz-header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  color: white;
+  text-align: center;
+}
+
+.target-letter {
+  font-size: 5em;
+  font-weight: bold;
+  margin: 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 10px;
+}
+
+.quiz-instruction {
+  font-size: 1.3em;
+  margin-bottom: 10px;
+}
+
+.progress-bar-container {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  height: 30px;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  height: 100%;
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.video-section {
+  position: relative;
+}
+
+.video-container {
+  position: relative;
+  background: #000;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#videoElement {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.feedback-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(16, 185, 129, 0.95);
+  padding: 30px 50px;
+  border-radius: 20px;
+  font-size: 3em;
+  font-weight: bold;
+  color: white;
+  display: none;
+  animation: popIn 0.3s ease;
+  z-index: 10;
+}
+
+.feedback-overlay.show {
+  display: block;
+}
+
+.feedback-overlay.correct {
+  background: rgba(16, 185, 129, 0.95);
+}
+
+.feedback-overlay.incorrect {
+  background: rgba(239, 68, 68, 0.95);
+}
+
+@keyframes popIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.prediction-display {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  color: white;
+  text-align: center;
+}
+
+.prediction-text {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.score-card {
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  color: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.score-card h3 {
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.score-value {
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+.status-card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.status-card h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1em;
+  color: #666;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+  background: #4ade80;
+}
+
+.status-dot.disconnected {
+  background: #ef4444;
+  animation: none;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.attempts-list {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.attempts-list h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.attempt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.attempt-letter {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.attempt-status {
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.attempt-status.correct {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.attempt-status.skipped {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 15px 35px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+#startButton {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+#startButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+#stopButton {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+#stopButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+}
+
+#skipButton {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+}
+
+#skipButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+}
+
+#restartButton {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+#restartButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.completion-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.completion-modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 500px;
+  animation: popIn 0.5s ease;
+}
+
+.modal-content h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #10b981;
+}
+
+.modal-content .final-score {
+  font-size: 2em;
+  margin: 20px 0;
+  color: #333;
+}
+
+.modal-content button {
+  margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎓 Gesture Learning Quiz</h1>
+      <p class="subtitle">
+        Practice sign language gestures and test your skills!
+      </p>
+
+      <div class="quiz-header">
+        <div class="quiz-instruction">Show the gesture for:</div>
+        <div class="target-letter" id="targetLetter">-</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar" style="width: 0%">
+            <span id="progressText">0 / 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="video-section">
+          <div class="video-container">
+            <video id="videoElement" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="feedback-overlay" id="feedbackOverlay">✓ CORRECT!</div>
+            <div class="prediction-display">
+              <div class="prediction-text" id="predictionText">
+                Your gesture: ...
+              </div>
+              <div id="confidenceText">Confidence: 0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="score-card">
+            <h3>📊 Your Score</h3>
+            <div class="score-item">
+              <span>Correct:</span>
+              <span class="score-value" id="correctCount">0</span>
+            </div>
+            <div class="score-item">
+              <span>Skipped:</span>
+              <span class="score-value" id="skippedCount">0</span>
+            </div>
+            <div class="score-item">
+              <span>Accuracy:</span>
+              <span class="score-value" id="accuracyPercent">0%</span>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <h3>Connection</h3>
+            <div class="status-indicator">
+              <div class="status-dot disconnected" id="statusDot"></div>
+              <span id="statusText">Disconnected</span>
+            </div>
+          </div>
+
+          <div class="attempts-list">
+            <h3>📝 History</h3>
+            <div id="attemptsContainer">
+              <p style="text-align: center; color: #999">No attempts yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="startButton">Start Quiz</button>
+        <button id="skipButton" disabled>Skip Letter</button>
+        <button id="restartButton" disabled>Restart Quiz</button>
+        <button id="stopButton" disabled>Stop</button>
+      </div>
+    </div>
+
+    <div class="completion-modal" id="completionModal">
+      <div class="modal-content">
+        <h2>🎉 Quiz Complete!</h2>
+        <p class="final-score">Score: <strong id="finalScore">0/0</strong></p>
+        <p style="font-size: 1.2em; color: #666; margin: 10px 0">
+          Accuracy: <strong id="finalAccuracy">0%</strong>
+        </p>
+        <button id="modalRestartButton">Play Again</button>
+      </div>
+    </div>
     <script>
-      // === QUIZ + WS + CAMERA ===
-      const quizSigns = ["A", "Aa", "Aaa", "e", "Ee", "Unknown", "y"]; // ensure these match your model's action labels
-+      let currentIndex = 0;
-+      let score = 0;
-+
-      // UI refs
-      const targetEl = document.getElementById("target");
-      const scoreEl = document.getElementById("score");
-      const totalEl = document.getElementById("total");
-      const quizStatus = document.getElementById("quizStatus");
-      const passBtn = document.getElementById("passBtn");
+      // Copy everything between the <script> tags from index.html and paste it here
+const video = document.getElementById("videoElement");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const startButton = document.getElementById("startButton");
+const stopButton = document.getElementById("stopButton");
+const skipButton = document.getElementById("skipButton");
+const restartButton = document.getElementById("restartButton");
+const targetLetter = document.getElementById("targetLetter");
+const predictionText = document.getElementById("predictionText");
+const confidenceText = document.getElementById("confidenceText");
+const statusDot = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
+const feedbackOverlay = document.getElementById("feedbackOverlay");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const correctCount = document.getElementById("correctCount");
+const skippedCount = document.getElementById("skippedCount");
+const accuracyPercent = document.getElementById("accuracyPercent");
+const attemptsContainer = document.getElementById("attemptsContainer");
+const completionModal = document.getElementById("completionModal");
+const modalRestartButton = document.getElementById("modalRestartButton");
 
-      totalEl.innerText = quizSigns.length;
+let ws = null;
+let stream = null;
+let isProcessing = false;
+let frameInterval = 100;
 
-      function setNextQuestion() {
-        if (currentIndex < quizSigns.length) {
-          targetEl.innerText = quizSigns[currentIndex];
-          quizStatus.innerText = "Show the sign!";
+// Quiz state
+let actions = [];
+let currentIndex = 0;
+let correctAnswers = 0;
+let skippedAnswers = 0;
+let attempts = [];
+let consecutiveCorrect = 0;
+let isTransitioning = false; // New flag to prevent multiple counts
+const REQUIRED_CORRECT = 3; // Need 3 consecutive correct predictions
+
+// Fetch available actions from backend
+async function loadActions() {
+  try {
+    const response = await fetch("/actions");
+    const data = await response.json();
+    actions = data.actions.filter((a) => a !== "unknown"); // Remove 'unknown'
+    shuffleArray(actions);
+    updateQuizUI();
+  } catch (error) {
+    console.error("Failed to load actions:", error);
+  }
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function updateQuizUI() {
+  if (currentIndex < actions.length) {
+    targetLetter.textContent = actions[currentIndex];
+    const progress = (currentIndex / actions.length) * 100;
+    progressBar.style.width = progress + "%";
+    progressText.textContent = `${currentIndex} / ${actions.length}`;
+  } else {
+    showCompletionModal();
+  }
+}
+
+function updateScore() {
+  correctCount.textContent = correctAnswers;
+  skippedCount.textContent = skippedAnswers;
+  const total = correctAnswers + skippedAnswers;
+  const accuracy = total > 0 ? ((correctAnswers / total) * 100).toFixed(1) : 0;
+  accuracyPercent.textContent = accuracy + "%";
+}
+
+function addAttempt(letter, status) {
+  attempts.push({ letter, status });
+  updateAttemptsUI();
+}
+
+function updateAttemptsUI() {
+  if (attempts.length === 0) {
+    attemptsContainer.innerHTML =
+      '<p style="text-align: center; color: #999;">No attempts yet</p>';
+    return;
+  }
+
+  attemptsContainer.innerHTML = attempts
+    .slice()
+    .reverse()
+    .map(
+      (attempt) => `
+                <div class="attempt-item">
+                    <span class="attempt-letter">${attempt.letter}</span>
+                    <span class="attempt-status ${
+                      attempt.status
+                    }">${attempt.status.toUpperCase()}</span>
+                </div>
+            `
+    )
+    .join("");
+}
+
+function showFeedback(isCorrect) {
+  feedbackOverlay.className =
+    "feedback-overlay show " + (isCorrect ? "correct" : "incorrect");
+  feedbackOverlay.textContent = isCorrect ? "✓ CORRECT!" : "✗ TRY AGAIN";
+
+  setTimeout(() => {
+    feedbackOverlay.classList.remove("show");
+  }, 1000);
+}
+
+function nextLetter() {
+  consecutiveCorrect = 0;
+  isTransitioning = false; // Reset transition flag
+  currentIndex++;
+  updateQuizUI();
+}
+
+function skipLetter() {
+  if (isTransitioning) return; // Prevent skipping during transition
+  skippedAnswers++;
+  addAttempt(actions[currentIndex], "skipped");
+  updateScore();
+  showFeedback(false);
+  nextLetter();
+}
+
+function showCompletionModal() {
+  completionModal.classList.add("show");
+  document.getElementById(
+    "finalScore"
+  ).textContent = `${correctAnswers}/${actions.length}`;
+  const accuracy = ((correctAnswers / actions.length) * 100).toFixed(1);
+  document.getElementById("finalAccuracy").textContent = accuracy + "%";
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  correctAnswers = 0;
+  skippedAnswers = 0;
+  consecutiveCorrect = 0;
+  isTransitioning = false; // Reset transition flag
+  attempts = [];
+  shuffleArray(actions);
+  updateQuizUI();
+  updateScore();
+  updateAttemptsUI();
+  completionModal.classList.remove("show");
+}
+
+// WebSocket connection
+function connectWebSocket() {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  ws = new WebSocket(`${protocol}//${window.location.host}/ws/predict`);
+
+  ws.onopen = () => {
+    statusDot.className = "status-dot connected";
+    statusText.textContent = "Connected";
+    console.log("✅ WebSocket connected");
+  };
+
+  ws.onclose = () => {
+    statusDot.className = "status-dot disconnected";
+    statusText.textContent = "Disconnected";
+    console.log("🔌 WebSocket disconnected");
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    isProcessing = false;
+
+    const currentTarget = actions[currentIndex];
+
+    // Update display
+    if (data.detected) {
+      predictionText.textContent = `Your gesture: ${data.prediction}`;
+      confidenceText.textContent = `Confidence: ${data.confidence.toFixed(2)}`;
+
+      // Only process if we're not transitioning to next letter
+      if (!isTransitioning) {
+        // Check if prediction matches target
+        if (data.prediction === currentTarget && data.confidence > 0.7) {
+          consecutiveCorrect++;
+
+          if (consecutiveCorrect >= REQUIRED_CORRECT) {
+            // Set transitioning flag to prevent multiple counts
+            isTransitioning = true;
+
+            // Correct answer!
+            correctAnswers++;
+            addAttempt(currentTarget, "correct");
+            updateScore();
+            showFeedback(true);
+
+            setTimeout(() => {
+              nextLetter();
+            }, 1500);
+          }
         } else {
-          quizStatus.innerText = `\u2705 Quiz finished! Final Score: ${score}/${quizSigns.length}`;
-          targetEl.innerText = "-";
+          consecutiveCorrect = 0; // Reset if wrong
         }
       }
+    } else {
+      predictionText.textContent = "Your gesture: ...";
+      confidenceText.textContent = `Confidence: ${data.confidence.toFixed(2)}`;
+      if (!isTransitioning) {
+        consecutiveCorrect = 0;
+      }
+    }
 
-      passBtn.onclick = () => {
-        // allow user to skip if stuck
-        if (currentIndex < quizSigns.length) {
-          currentIndex++;
-          setNextQuestion();
-        }
-      };
+    // Draw landmarks
+    if (data.landmarks) {
+      drawLandmarks(data.landmarks);
+    }
+  };
 
-      // Start the first question
-      setNextQuestion();
+  ws.onerror = (error) => {
+    console.error("❌ WebSocket error:", error);
+  };
+}
 
-      (async () => {
-        const video = document.getElementById("webcam");
-        const status = document.getElementById("status");
-        const predLabel = document.getElementById("predLabel");
-        const confText = document.getElementById("conf");
-        const probsDiv = document.getElementById("probs");
+function drawLandmarks(landmarks) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // configuration for quiz confirmation
-+        const CONFIDENCE_THRESHOLD = 0.8; // per-frame confidence required
-+        const CONFIRM_REQUIRED = 4; // consecutive frames required to accept answer
-+        let confirmCount = 0;
-+        let lastPred = null;
-+        let isTransitioning = false; // prevents double-advances
-+
-        // WebSocket to server
-        const WS_URL = "ws://localhost:8001/ws/predict"; // change if your server runs elsewhere
-+        let ws;
-+
-        function connectWS() {
-          ws = new WebSocket(WS_URL);
-+          ws.onopen = () => { status.innerText = "WebSocket connected"; };
-+          ws.onclose = () => { status.innerText = "WebSocket closed"; };
-+          ws.onerror = (e) => { status.innerText = "WebSocket error"; console.error(e); };
-+
-+          ws.onmessage = (ev) => {
-            try {
-              const data = JSON.parse(ev.data);
-+              if (!data) return;
-+
-              // show prediction + confidence
-+              const pred = data.predicted_action || '...';
-+              const conf = typeof data.confidence === 'number' ? data.confidence : 0;
-+              predLabel.innerText = pred;
-+              confText.innerText = 'confidence: ' + conf.toFixed(2);
-+
-              // update probability bars if provided
-+              const probs = data.probs || {};
-+              probsDiv.innerHTML = '';
-+              Object.keys(probs).sort().forEach(k => {
-+                const p = probs[k];
-+                const wrapper = document.createElement('div');
-+                wrapper.style.display = 'flex'; wrapper.style.alignItems = 'center'; wrapper.style.gap = '8px';
-+                const label = document.createElement('div'); label.className = 'label'; label.style.width='80px'; label.innerText = k;
-+                const bar = document.createElement('div'); bar.className = 'bar'; bar.style.flex='1';
-+                const inner = document.createElement('div'); inner.className='bar-inner'; inner.style.width = Math.round(p*100) + '%';
-+                bar.appendChild(inner);
-+                const pct = document.createElement('div'); pct.style.width='40px'; pct.innerText = (p*100).toFixed(0) + '%';
-+                wrapper.appendChild(label); wrapper.appendChild(bar); wrapper.appendChild(pct);
-+                probsDiv.appendChild(wrapper);
-+              });
-+
-+              // Quiz handling: require consecutive confirmations
-+              if (currentIndex < quizSigns.length && !isTransitioning) {
-+                const target = quizSigns[currentIndex];
-+                if (pred === target && conf >= CONFIDENCE_THRESHOLD) {
-+                  if (lastPred === pred) {
-+                    confirmCount++;
-+                  } else {
-+                    confirmCount = 1;
-+                    lastPred = pred;
-+                  }
-+                  quizStatus.innerText = `Hold steady... (${confirmCount}/${CONFIRM_REQUIRED})`;
-+                  if (confirmCount >= CONFIRM_REQUIRED) {
-+                    // accepted
-+                    isTransitioning = true;
-+                    score++;
-+                    scoreEl.innerText = score;
-+                    quizStatus.innerText = `\u2714 Correct! (${target})`;
-+                    // small delay before next question so user sees feedback
-+                    setTimeout(() => {
-+                      currentIndex++;
-+                      confirmCount = 0; lastPred = null; isTransitioning = false;
-+                      setNextQuestion();
-+                    }, 900);
-+                  }
-+                } else {
-+                  // reset confirmation if wrong or low confidence
-+                  if (confirmCount > 0) {
-+                    confirmCount = 0; lastPred = null;
-+                  }
-+                  // show hint/status but don't spam
-+                  if (pred !== '...') {
-+                    quizStatus.innerText = `Try to match: ${target} — detected: ${pred} (${(conf*100).toFixed(0)}%)`;
-+                  } else {
-+                    quizStatus.innerText = `Show: ${target}`;
-+                  }
-+                }
-+              }
-+            } catch (err) { console.error('Invalid message', err); }
-+          };
-+        }
-+
-        // start WS connection
-+        connectWS();
-+
-        // start webcam
-+        try {
-+          const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
-+          video.srcObject = stream;
-+        } catch (e) {
-+          alert('Could not access webcam: ' + (e && e.message ? e.message : e));
-+          return;
-+        }
-+
-        // prepare an offscreen canvas to capture frames and send over WS
-+        const canvas = document.createElement('canvas');
-+        const ctx = canvas.getContext('2d');
-+        const SEND_EVERY_N = 2; let frameCounter = 0;
-+
-        function captureAndSend() {
-+          if (video.readyState < 2) { requestAnimationFrame(captureAndSend); return; }
-+          const w = 320, h = 240; canvas.width = w; canvas.height = h; ctx.drawImage(video, 0, 0, w, h);
-+          frameCounter++;
-+          if (ws && ws.readyState === WebSocket.OPEN && frameCounter % SEND_EVERY_N === 0) {
-+            canvas.toBlob((blob) => { if (!blob) return; const reader = new FileReader(); reader.onload = () => { try { ws.send(reader.result); } catch(e) { console.error('send error', e); } }; reader.readAsArrayBuffer(blob); }, 'image/jpeg', 0.7);
-+          }
-+          requestAnimationFrame(captureAndSend);
-+        }
-+
-+        requestAnimationFrame(captureAndSend);
-+      })();
-    </script>
+  // Draw pose
+  if (landmarks.pose) {
+    drawConnections(
+      landmarks.pose,
+      [
+        [11, 13],
+        [13, 15],
+        [12, 14],
+        [14, 16],
+        [11, 12],
+        [11, 23],
+        [12, 24],
+        [23, 24],
+      ],
+      "#5056EE",
+      3
+    );
+  }
 
-        // start webcam
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false,
-          });
-          video.srcObject = stream;
-        } catch (e) {
-          alert("Could not access webcam: " + e.message);
-          return;
-        }
+  // Draw hands
+  const handConnections = [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [0, 5],
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [0, 9],
+    [9, 10],
+    [10, 11],
+    [11, 12],
+    [0, 13],
+    [13, 14],
+    [14, 15],
+    [15, 16],
+    [0, 17],
+    [17, 18],
+    [18, 19],
+    [19, 20],
+    [5, 9],
+    [9, 13],
+    [13, 17],
+  ];
 
-        // prepare an offscreen canvas to capture frames
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+  if (landmarks.left_hand) {
+    drawConnections(landmarks.left_hand, handConnections, "#FF1493", 2);
+  }
 
-        // config
-        const SEND_EVERY_N = 2; // send every 2 frames (tweak)
-        let frameCounter = 0;
+  if (landmarks.right_hand) {
+    drawConnections(landmarks.right_hand, handConnections, "#FF6347", 2);
+  }
+}
 
-        function captureAndSend() {
-          if (video.readyState < 2) {
-            requestAnimationFrame(captureAndSend);
-            return;
-          }
-          // pick size to reduce bandwidth
-          const w = 320,
-            h = 240;
-          canvas.width = w;
-          canvas.height = h;
-          ctx.drawImage(video, 0, 0, w, h);
-          frameCounter++;
-          if (
-            ws.readyState === WebSocket.OPEN &&
-            frameCounter % SEND_EVERY_N === 0
-          ) {
-            // get JPEG blob
-            canvas.toBlob(
-              (blob) => {
-                if (!blob) return;
-                // send as binary
-                const reader = new FileReader();
-                reader.onload = () => {
-                  const arrayBuffer = reader.result;
-                  try {
-                    ws.send(arrayBuffer);
-                  } catch (e) {
-                    console.error("send error", e);
-                  }
-                };
-                reader.readAsArrayBuffer(blob);
-              },
-              "image/jpeg",
-              0.7
-            );
-          }
-          requestAnimationFrame(captureAndSend);
-        }
+function drawConnections(points, connections, color, lineWidth) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
 
-        requestAnimationFrame(captureAndSend);
-      })();
+  connections.forEach(([start, end]) => {
+    if (points[start] && points[end]) {
+      ctx.beginPath();
+      ctx.moveTo(
+        points[start][0] * canvas.width,
+        points[start][1] * canvas.height
+      );
+      ctx.lineTo(points[end][0] * canvas.width, points[end][1] * canvas.height);
+      ctx.stroke();
+    }
+  });
+
+  ctx.fillStyle = color;
+  points.forEach((point) => {
+    ctx.beginPath();
+    ctx.arc(
+      point[0] * canvas.width,
+      point[1] * canvas.height,
+      4,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
+  });
+}
+
+async function startDetection() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: { ideal: 640 },
+        height: { ideal: 480 },
+        frameRate: { ideal: 30 },
+      },
+    });
+    video.srcObject = stream;
+
+    video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    };
+
+    connectWebSocket();
+    sendFrames();
+
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    skipButton.disabled = false;
+    restartButton.disabled = false;
+  } catch (error) {
+    console.error("❌ Error accessing camera:", error);
+    alert("Could not access camera. Please check permissions.");
+  }
+}
+
+function sendFrames() {
+  setInterval(() => {
+    if (!ws || ws.readyState !== WebSocket.OPEN || isProcessing) {
+      return;
+    }
+
+    isProcessing = true;
+
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = 320;
+    tempCanvas.height = 240;
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCtx.drawImage(video, 0, 0, 320, 240);
+
+    const imageData = tempCanvas.toDataURL("image/jpeg", 0.5);
+    ws.send(JSON.stringify({ image: imageData }));
+  }, frameInterval);
+}
+
+function stopDetection() {
+  if (stream) {
+    stream.getTracks().forEach((track) => track.stop());
+    stream = null;
+  }
+
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+
+  isProcessing = false;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  skipButton.disabled = true;
+  restartButton.disabled = true;
+}
+
+// Event listeners
+startButton.addEventListener("click", startDetection);
+stopButton.addEventListener("click", stopDetection);
+skipButton.addEventListener("click", skipLetter);
+restartButton.addEventListener("click", restartQuiz);
+modalRestartButton.addEventListener("click", () => {
+  restartQuiz();
+  if (!stream) {
+    startDetection();
+  }
+});
+
+// Load actions on page load
+loadActions();
+
     </script>
   </body>
 </html>
