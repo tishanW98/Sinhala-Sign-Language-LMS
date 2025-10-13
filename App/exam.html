@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Mode - Sinhala Sign Language LMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+/* Exam Mode Specific Styles */
+body {
+    background: linear-gradient(135deg, var(--error-50) 0%, var(--warning-50) 100%);
+    min-height: 100vh;
+    font-family: var(--font-family-sinhala);
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.navbar-brand {
+    font-weight: var(--font-bold);
+    color: var(--error-700) !important;
+    font-size: var(--text-xl);
+}
+
+.nav-link {
+    font-weight: var(--font-medium);
+    color: var(--neutral-600) !important;
+    transition: color var(--transition-fast);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--error-600) !important;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6);
+}
+
+.exam-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.exam-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-2);
+}
+
+.exam-subtitle {
+    font-size: var(--text-lg);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-6);
+}
+
+.exam-info-card {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-6);
+    animation: slideUp 0.6s ease-out;
+    border-left: 4px solid var(--error-500);
+}
+
+.exam-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.info-item {
+    text-align: center;
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+}
+
+.info-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--error-600);
+    display: block;
+}
+
+.info-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+    margin-top: var(--space-1);
+    font-weight: var(--font-medium);
+}
+
+.timer-display {
+    background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%);
+    color: white;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    margin-bottom: var(--space-4);
+    box-shadow: var(--shadow-md);
+}
+
+.timer-text {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-2);
+}
+
+.timer-label {
+    font-size: var(--text-sm);
+    opacity: 0.9;
+}
+
+.exam-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.video-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.8s ease-out;
+}
+
+.video-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.video-container {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: var(--neutral-900);
+    margin-bottom: var(--space-4);
+}
+
+#webcam {
+    width: 100%;
+    height: auto;
+    display: block;
+    min-height: 300px;
+    object-fit: cover;
+}
+
+.detection-overlay {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    right: var(--space-4);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    backdrop-filter: blur(10px);
+}
+
+.confidence-meter {
+    margin-top: var(--space-2);
+}
+
+.confidence-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--warning-400) 0%, var(--success-400) 100%);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+.question-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 1s ease-out;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--neutral-200);
+}
+
+.question-number {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-600);
+}
+
+.question-total {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+}
+
+.question-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.sign-display {
+    font-size: var(--text-6xl);
+    font-weight: var(--font-bold);
+    color: var(--error-600);
+    text-align: center;
+    margin: var(--space-6) 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    animation: bounce 1s ease-in-out;
+}
+
+.sign-image {
+    width: 100%;
+    max-width: 300px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    background: white;
+    padding: var(--space-4);
+    margin: var(--space-4) auto;
+    display: block;
+}
+
+.answer-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin: var(--space-6) 0;
+}
+
+.option-button {
+    padding: var(--space-4);
+    border: 2px solid var(--neutral-300);
+    border-radius: var(--radius-xl);
+    background: white;
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option-button:hover {
+    border-color: var(--error-400);
+    background: var(--error-50);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.option-button.selected {
+    border-color: var(--error-500);
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+.option-button.correct {
+    border-color: var(--success-500);
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.option-button.incorrect {
+    border-color: var(--error-500);
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+.feedback-section {
+    margin: var(--space-4) 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    font-weight: var(--font-medium);
+    display: none;
+}
+
+.feedback-correct {
+    background: var(--success-50);
+    color: var(--success-800);
+    border: 2px solid var(--success-200);
+}
+
+.feedback-incorrect {
+    background: var(--error-50);
+    color: var(--error-800);
+    border: 2px solid var(--error-200);
+}
+
+.action-buttons {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.btn-submit {
+    flex: 1;
+    min-width: 150px;
+    background: linear-gradient(135deg, var(--error-600) 0%, var(--error-700) 100%);
+    color: white;
+    border: none;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--error-700) 0%, var(--error-800) 100%);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-skip {
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    border: 1px solid var(--neutral-300);
+}
+
+.btn-skip:hover:not(:disabled) {
+    background: var(--neutral-200);
+    color: var(--neutral-700);
+}
+
+.progress-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-6);
+    animation: slideUp 0.6s ease-out;
+}
+
+.progress-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.progress-bar {
+    height: var(--space-3);
+    background: var(--neutral-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--error-500) 0%, var(--error-600) 100%);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-4);
+}
+
+.progress-stat {
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--neutral-200);
+}
+
+.progress-stat-value {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--error-600);
+    display: block;
+}
+
+.progress-stat-label {
+    font-size: var(--text-xs);
+    color: var(--neutral-600);
+    margin-top: var(--space-1);
+}
+
+.results-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    backdrop-filter: blur(5px);
+}
+
+.results-modal.show {
+    display: flex;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.results-content {
+    background: white;
+    padding: var(--space-8);
+    border-radius: var(--radius-3xl);
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    animation: slideUp 0.5s ease-out;
+    box-shadow: var(--shadow-2xl);
+}
+
+.results-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+}
+
+.results-score {
+    font-size: var(--text-6xl);
+    font-weight: var(--font-bold);
+    margin: var(--space-4) 0;
+}
+
+.score-excellent {
+    color: var(--success-600);
+}
+
+.score-good {
+    color: var(--warning-600);
+}
+
+.score-poor {
+    color: var(--error-600);
+}
+
+.results-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin: var(--space-6) 0;
+}
+
+.result-stat {
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+}
+
+.result-stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--error-600);
+    display: block;
+}
+
+.result-stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+    margin-top: var(--space-1);
+}
+
+.results-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.btn-retake {
+    background: linear-gradient(135deg, var(--error-600) 0%, var(--error-700) 100%);
+    color: white;
+    border: none;
+}
+
+.btn-practice {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    border: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .exam-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .answer-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: var(--space-4);
+    }
+    
+    .exam-title {
+        font-size: var(--text-3xl);
+    }
+    
+    .sign-display {
+        font-size: var(--text-5xl);
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-submit, .btn-skip {
+        width: 100%;
+    }
+    
+    .results-actions {
+        flex-direction: column;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.option-button:focus {
+    outline: 3px solid var(--error-500);
+    outline-offset: 2px;
+}
+
+.btn:focus {
+    outline: 3px solid var(--error-500);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .option-button {
+        border-width: 3px;
+    }
+    
+    .feedback-section {
+        border-width: 3px;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-sinhala">🤟 සිංහල අත් ලකුණු LMS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="practice.html">Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="exam.html" aria-current="page">Exam</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container" style="margin-top: 80px;">
+        <!-- Header -->
+        <div class="exam-header">
+            <h1 class="exam-title text-sinhala">📝 Exam Mode</h1>
+            <p class="exam-subtitle">Test your knowledge with timed assessments and get detailed results</p>
+        </div>
+
+        <!-- Exam Info -->
+        <div class="exam-info-card">
+            <h2 class="progress-title">
+                <span>ℹ️</span>
+                <span>Exam Information</span>
+            </h2>
+            <div class="exam-info-grid">
+                <div class="info-item">
+                    <span class="info-value" id="total-questions">10</span>
+                    <span class="info-label">Total Questions</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-value" id="time-limit">5:00</span>
+                    <span class="info-label">Time Limit</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-value" id="passing-score">70%</span>
+                    <span class="info-label">Passing Score</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-value" id="attempts-left">3</span>
+                    <span class="info-label">Attempts Left</span>
+                </div>
+            </div>
+            <div class="timer-display">
+                <div class="timer-text" id="timer-display">5:00</div>
+                <div class="timer-label">Time Remaining</div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <h3 class="progress-title">
+                <span>📊</span>
+                <span>Exam Progress</span>
+            </h3>
+            <div class="progress-bar">
+                <div id="exam-progress" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="current-question">1</span>
+                    <span class="progress-stat-label">Current</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="correct-answers">0</span>
+                    <span class="progress-stat-label">Correct</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="incorrect-answers">0</span>
+                    <span class="progress-stat-label">Incorrect</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-stat-value" id="skipped-questions">0</span>
+                    <span class="progress-stat-label">Skipped</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Content -->
+        <div class="exam-content">
+            <!-- Video Section -->
+            <div class="video-section">
+                <h3 class="video-title">
+                    <span>📹</span>
+                    <span>Your Camera</span>
+                </h3>
+                <div class="video-container">
+                    <video id="webcam" autoplay playsinline muted aria-label="Webcam feed for sign recognition"></video>
+                    <div class="detection-overlay">
+                        <div id="prediction-text">Initializing camera...</div>
+                        <div class="confidence-meter">
+                            <div class="confidence-bar">
+                                <div id="confidence-fill" class="confidence-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Section -->
+            <div class="question-section">
+                <div class="question-header">
+                    <div class="question-number">Question <span id="question-number">1</span></div>
+                    <div class="question-total">of <span id="question-total">10</span></div>
+                </div>
+                
+                <h3 class="question-title">
+                    <span>❓</span>
+                    <span>What sign is this?</span>
+                </h3>
+                
+                <div class="sign-display text-sinhala" id="current-sign" aria-live="polite">...</div>
+                <img id="sign-image" class="sign-image" src="images/placeholder.jpg" alt="Sign demonstration image">
+                
+                <div class="answer-options" id="answer-options">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+                
+                <div id="feedback-section" class="feedback-section" role="status" aria-live="polite">
+                    <!-- Feedback will be shown here -->
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="submit-button" class="btn btn-submit btn-lg" disabled>
+                        Submit Answer
+                    </button>
+                    <button id="skip-question-button" class="btn btn-skip btn-lg">
+                        Skip Question
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div id="results-modal" class="results-modal" role="dialog" aria-labelledby="results-title" aria-modal="true">
+        <div class="results-content">
+            <h2 id="results-title" class="results-title text-sinhala">Exam Complete!</h2>
+            <div class="results-score" id="final-score">85%</div>
+            <p id="results-message" class="completion-subtitle">Great job! You passed the exam.</p>
+            
+            <div class="results-stats">
+                <div class="result-stat">
+                    <span class="result-stat-value" id="final-correct">8</span>
+                    <span class="result-stat-label">Correct Answers</span>
+                </div>
+                <div class="result-stat">
+                    <span class="result-stat-value" id="final-incorrect">2</span>
+                    <span class="result-stat-label">Incorrect Answers</span>
+                </div>
+                <div class="result-stat">
+                    <span class="result-stat-value" id="final-time">4:32</span>
+                    <span class="result-stat-label">Time Taken</span>
+                </div>
+                <div class="result-stat">
+                    <span class="result-stat-value" id="final-accuracy">80%</span>
+                    <span class="result-stat-label">Accuracy</span>
+                </div>
+            </div>
+            
+            <div class="results-actions">
+                <button class="btn btn-retake btn-lg" onclick="retakeExam()">
+                    Retake Exam
+                </button>
+                <button class="btn btn-practice btn-lg" onclick="goToPractice()">
+                    Practice More
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="accessibility.js"></script>
+    <script src="performance.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Exam-specific JavaScript
+        let examState = {
+            currentQuestion: 0,
+            totalQuestions: 10,
+            timeLimit: 300, // 5 minutes in seconds
+            timeRemaining: 300,
+            correctAnswers: 0,
+            incorrectAnswers: 0,
+            skippedQuestions: 0,
+            selectedAnswer: null,
+            examStarted: false,
+            examCompleted: false,
+            timer: null
+        };
+
+        const examQuestions = [
+            { sign: 'අ', options: ['අ', 'ආ', 'ඇ', 'ඈ'], correct: 0 },
+            { sign: 'ආ', options: ['අ', 'ආ', 'ඇ', 'ඈ'], correct: 1 },
+            { sign: 'ඇ', options: ['අ', 'ආ', 'ඇ', 'ඈ'], correct: 2 },
+            { sign: 'ඈ', options: ['අ', 'ආ', 'ඇ', 'ඈ'], correct: 3 },
+            { sign: 'එ', options: ['එ', 'ඒ', 'ඉ', 'ඊ'], correct: 0 },
+            { sign: 'ඒ', options: ['එ', 'ඒ', 'ඉ', 'ඊ'], correct: 1 },
+            { sign: 'ඉ', options: ['එ', 'ඒ', 'ඉ', 'ඊ'], correct: 2 },
+            { sign: 'ඊ', options: ['එ', 'ඒ', 'ඉ', 'ඊ'], correct: 3 },
+            { sign: 'උ', options: ['උ', 'ඌ', 'අ', 'ආ'], correct: 0 },
+            { sign: 'ඌ', options: ['උ', 'ඌ', 'අ', 'ආ'], correct: 1 }
+        ];
+
+        function startExam() {
+            examState.examStarted = true;
+            examState.timeRemaining = examState.timeLimit;
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            examState.timer = setInterval(() => {
+                examState.timeRemaining--;
+                updateTimerDisplay();
+                
+                if (examState.timeRemaining <= 0) {
+                    endExam();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(examState.timeRemaining / 60);
+            const seconds = examState.timeRemaining % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').textContent = timeString;
+        }
+
+        function loadQuestion() {
+            if (examState.currentQuestion >= examState.totalQuestions) {
+                endExam();
+                return;
+            }
+
+            const question = examQuestions[examState.currentQuestion];
+            document.getElementById('question-number').textContent = examState.currentQuestion + 1;
+            document.getElementById('current-sign').textContent = question.sign;
+            document.getElementById('sign-image').src = `images/${question.sign}.jpg`;
+            
+            const optionsContainer = document.getElementById('answer-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+
+            examState.selectedAnswer = null;
+            document.getElementById('submit-button').disabled = true;
+            document.getElementById('feedback-section').style.display = 'none';
+            updateProgress();
+        }
+
+        function selectAnswer(index) {
+            examState.selectedAnswer = index;
+            
+            // Update button states
+            document.querySelectorAll('.option-button').forEach((btn, i) => {
+                btn.classList.remove('selected');
+                if (i === index) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            document.getElementById('submit-button').disabled = false;
+        }
+
+        function submitAnswer() {
+            if (examState.selectedAnswer === null) return;
+
+            const question = examQuestions[examState.currentQuestion];
+            const isCorrect = examState.selectedAnswer === question.correct;
+            
+            if (isCorrect) {
+                examState.correctAnswers++;
+            } else {
+                examState.incorrectAnswers++;
+            }
+
+            showFeedback(isCorrect, question.options[examState.selectedAnswer], question.options[question.correct]);
+            updateProgress();
+            
+            setTimeout(() => {
+                examState.currentQuestion++;
+                loadQuestion();
+            }, 2000);
+        }
+
+        function skipQuestion() {
+            examState.skippedQuestions++;
+            examState.currentQuestion++;
+            updateProgress();
+            loadQuestion();
+        }
+
+        function showFeedback(isCorrect, selectedAnswer, correctAnswer) {
+            const feedbackSection = document.getElementById('feedback-section');
+            feedbackSection.style.display = 'block';
+            
+            if (isCorrect) {
+                feedbackSection.className = 'feedback-section feedback-correct';
+                feedbackSection.innerHTML = `
+                    <div>✅ Correct!</div>
+                    <div>You selected: <strong>${selectedAnswer}</strong></div>
+                `;
+            } else {
+                feedbackSection.className = 'feedback-section feedback-incorrect';
+                feedbackSection.innerHTML = `
+                    <div>❌ Incorrect</div>
+                    <div>You selected: <strong>${selectedAnswer}</strong></div>
+                    <div>Correct answer: <strong>${correctAnswer}</strong></div>
+                `;
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((examState.currentQuestion) / examState.totalQuestions) * 100;
+            document.getElementById('exam-progress').style.width = progress + '%';
+            document.getElementById('current-question').textContent = examState.currentQuestion + 1;
+            document.getElementById('correct-answers').textContent = examState.correctAnswers;
+            document.getElementById('incorrect-answers').textContent = examState.incorrectAnswers;
+            document.getElementById('skipped-questions').textContent = examState.skippedQuestions;
+        }
+
+        function endExam() {
+            examState.examCompleted = true;
+            clearInterval(examState.timer);
+            
+            const score = Math.round((examState.correctAnswers / examState.totalQuestions) * 100);
+            const timeTaken = examState.timeLimit - examState.timeRemaining;
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+            
+            document.getElementById('final-score').textContent = score + '%';
+            document.getElementById('final-correct').textContent = examState.correctAnswers;
+            document.getElementById('final-incorrect').textContent = examState.incorrectAnswers;
+            document.getElementById('final-time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('final-accuracy').textContent = score + '%';
+            
+            // Update score color based on performance
+            const scoreElement = document.getElementById('final-score');
+            scoreElement.className = 'results-score';
+            if (score >= 80) {
+                scoreElement.classList.add('score-excellent');
+                document.getElementById('results-message').textContent = 'Excellent! You passed with flying colors!';
+            } else if (score >= 70) {
+                scoreElement.classList.add('score-good');
+                document.getElementById('results-message').textContent = 'Good job! You passed the exam.';
+            } else {
+                scoreElement.classList.add('score-poor');
+                document.getElementById('results-message').textContent = 'Keep practicing! You can do better next time.';
+            }
+            
+            document.getElementById('results-modal').classList.add('show');
+        }
+
+        function retakeExam() {
+            examState = {
+                currentQuestion: 0,
+                totalQuestions: 10,
+                timeLimit: 300,
+                timeRemaining: 300,
+                correctAnswers: 0,
+                incorrectAnswers: 0,
+                skippedQuestions: 0,
+                selectedAnswer: null,
+                examStarted: false,
+                examCompleted: false,
+                timer: null
+            };
+            
+            document.getElementById('results-modal').classList.remove('show');
+            startExam();
+        }
+
+        function goToPractice() {
+            window.location.href = 'practice.html';
+        }
+
+        // Event listeners
+        document.getElementById('submit-button').addEventListener('click', submitAnswer);
+        document.getElementById('skip-question-button').addEventListener('click', skipQuestion);
+
+        // Initialize exam when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize webcam (reuse from script.js)
+            if (typeof initWebcam === 'function') {
+                initWebcam();
+            }
+            
+            // Start exam automatically
+            startExam();
+        });
+    </script>
+</body>
+</html>

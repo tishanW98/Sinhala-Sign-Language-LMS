@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help & Support - Sinhala Sign Language LMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+body {
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+    min-height: 100vh;
+    font-family: var(--font-family-sinhala);
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.navbar-brand {
+    font-weight: var(--font-bold);
+    color: var(--primary-700) !important;
+    font-size: var(--text-xl);
+}
+
+.nav-link {
+    font-weight: var(--font-medium);
+    color: var(--neutral-600) !important;
+    transition: color var(--transition-fast);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-600) !important;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-6);
+}
+
+.help-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.help-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-2);
+}
+
+.help-subtitle {
+    font-size: var(--text-lg);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-6);
+}
+
+.help-nav {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-6);
+    animation: slideUp 0.6s ease-out;
+}
+
+.help-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.help-nav-item {
+    margin: 0;
+}
+
+.help-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    color: var(--neutral-700);
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.help-nav-link:hover {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-color: var(--primary-200);
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.help-nav-icon {
+    font-size: var(--text-xl);
+    width: 24px;
+    text-align: center;
+}
+
+.help-content {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.8s ease-out;
+}
+
+.section-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.section-content {
+    margin-bottom: var(--space-8);
+}
+
+.step-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.step-item {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    border-left: 4px solid var(--primary-500);
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--primary-500);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-bold);
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-2);
+}
+
+.step-description {
+    color: var(--neutral-600);
+    line-height: 1.6;
+}
+
+.tip-box {
+    background: var(--success-50);
+    border: 2px solid var(--success-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    margin: var(--space-4) 0;
+}
+
+.tip-title {
+    font-weight: var(--font-semibold);
+    color: var(--success-800);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.tip-content {
+    color: var(--success-700);
+}
+
+.warning-box {
+    background: var(--warning-50);
+    border: 2px solid var(--warning-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    margin: var(--space-4) 0;
+}
+
+.warning-title {
+    font-weight: var(--font-semibold);
+    color: var(--warning-800);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.warning-content {
+    color: var(--warning-700);
+}
+
+.faq-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.faq-item {
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.faq-question {
+    background: var(--neutral-50);
+    padding: var(--space-4);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background var(--transition-fast);
+}
+
+.faq-question:hover {
+    background: var(--neutral-100);
+}
+
+.faq-answer {
+    padding: var(--space-4);
+    color: var(--neutral-600);
+    line-height: 1.6;
+    display: none;
+}
+
+.faq-answer.show {
+    display: block;
+}
+
+.faq-icon {
+    transition: transform var(--transition-fast);
+}
+
+.faq-icon.rotated {
+    transform: rotate(180deg);
+}
+
+.contact-section {
+    background: var(--primary-50);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    margin-top: var(--space-6);
+    text-align: center;
+}
+
+.contact-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--primary-800);
+    margin-bottom: var(--space-4);
+}
+
+.contact-description {
+    color: var(--primary-700);
+    margin-bottom: var(--space-4);
+}
+
+.contact-buttons {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.contact-button {
+    padding: var(--space-3) var(--space-6);
+    background: var(--primary-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+}
+
+.contact-button:hover {
+    background: var(--primary-700);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        padding: var(--space-4);
+    }
+    
+    .help-title {
+        font-size: var(--text-3xl);
+    }
+    
+    .help-nav-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-button {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-sinhala">🤟 සිංහල අත් ලකුණු LMS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="practice.html">Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="exam.html">Exam</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="help.html" aria-current="page">Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container" style="margin-top: 80px;">
+        <!-- Header -->
+        <div class="help-header">
+            <h1 class="help-title text-sinhala">❓ Help & Support</h1>
+            <p class="help-subtitle">Get help with using the Sinhala Sign Language LMS</p>
+        </div>
+
+        <!-- Help Navigation -->
+        <div class="help-nav">
+            <ul class="help-nav-list">
+                <li class="help-nav-item">
+                    <a href="#getting-started" class="help-nav-link">
+                        <span class="help-nav-icon">🚀</span>
+                        <span>Getting Started</span>
+                    </a>
+                </li>
+                <li class="help-nav-item">
+                    <a href="#practice-mode" class="help-nav-link">
+                        <span class="help-nav-icon">🎯</span>
+                        <span>Practice Mode</span>
+                    </a>
+                </li>
+                <li class="help-nav-item">
+                    <a href="#exam-mode" class="help-nav-link">
+                        <span class="help-nav-icon">📝</span>
+                        <span>Exam Mode</span>
+                    </a>
+                </li>
+                <li class="help-nav-item">
+                    <a href="#dashboard" class="help-nav-link">
+                        <span class="help-nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="help-nav-item">
+                    <a href="#troubleshooting" class="help-nav-link">
+                        <span class="help-nav-icon">🔧</span>
+                        <span>Troubleshooting</span>
+                    </a>
+                </li>
+                <li class="help-nav-item">
+                    <a href="#accessibility" class="help-nav-link">
+                        <span class="help-nav-icon">♿</span>
+                        <span>Accessibility</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Help Content -->
+        <div class="help-content">
+            <!-- Getting Started -->
+            <section id="getting-started" class="section-content">
+                <h2 class="section-title">
+                    <span>🚀</span>
+                    <span>Getting Started</span>
+                </h2>
+                
+                <p>Welcome to the Sinhala Sign Language LMS! Follow these steps to begin your learning journey:</p>
+                
+                <ol class="step-list">
+                    <li class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Enable Camera Access</div>
+                            <div class="step-description">
+                                When prompted, allow the browser to access your webcam. This is required for sign recognition.
+                                Your privacy is protected - all processing happens locally on your device.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Choose Your Learning Mode</div>
+                            <div class="step-description">
+                                Start with <strong>Practice Mode</strong> to learn signs with guided exercises,
+                                or take an <strong>Exam</strong> to test your current knowledge.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Follow the Instructions</div>
+                            <div class="step-description">
+                                Watch the demonstration and perform the sign shown. The AI will provide
+                                real-time feedback on your accuracy.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Track Your Progress</div>
+                            <div class="step-description">
+                                Visit the <strong>Dashboard</strong> to monitor your learning progress,
+                                view achievements, and access detailed analytics.
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>💡</span>
+                        <span>Pro Tip</span>
+                    </div>
+                    <div class="tip-content">
+                        Ensure good lighting and position your hands clearly in the camera view for best recognition accuracy.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practice Mode -->
+            <section id="practice-mode" class="section-content">
+                <h2 class="section-title">
+                    <span>🎯</span>
+                    <span>Practice Mode</span>
+                </h2>
+                
+                <p>Practice Mode helps you learn Sinhala signs through guided exercises and real-time feedback.</p>
+                
+                <h3>How Practice Mode Works:</h3>
+                <ol class="step-list">
+                    <li class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Select a Letter</div>
+                            <div class="step-description">
+                                Choose a Sinhala letter from the progress grid to practice.
+                                Completed letters are marked with a green checkmark.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Watch the Demonstration</div>
+                            <div class="step-description">
+                                Study the sign demonstration image and the large letter display.
+                                Pay attention to hand position and movement.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Perform the Sign</div>
+                            <div class="step-description">
+                                Position your hands in the camera view and perform the sign.
+                                The AI will analyze your movement and provide feedback.
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Complete 3 Successful Attempts</div>
+                            <div class="step-description">
+                                You need 3 correct attempts to master each letter.
+                                The progress dots show your current attempt count.
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>💡</span>
+                        <span>Practice Tips</span>
+                    </div>
+                    <div class="tip-content">
+                        <ul>
+                            <li>Keep your hands steady and visible in the camera</li>
+                            <li>Ensure good lighting on your hands</li>
+                            <li>Hold the sign position for 2-3 seconds</li>
+                            <li>Use the confidence meter to gauge accuracy</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exam Mode -->
+            <section id="exam-mode" class="section-content">
+                <h2 class="section-title">
+                    <span>📝</span>
+                    <span>Exam Mode</span>
+                </h2>
+                
+                <p>Exam Mode tests your knowledge with timed assessments and multiple-choice questions.</p>
+                
+                <h3>Exam Features:</h3>
+                <ul>
+                    <li><strong>Timed Assessment:</strong> Complete the exam within the time limit</li>
+                    <li><strong>Multiple Choice:</strong> Choose the correct answer from 4 options</li>
+                    <li><strong>Real-time Feedback:</strong> See immediate results for each question</li>
+                    <li><strong>Detailed Results:</strong> Review your performance and accuracy</li>
+                </ul>
+
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <span>⚠️</span>
+                        <span>Important</span>
+                    </div>
+                    <div class="warning-content">
+                        Exams are timed and you cannot pause or restart once begun. Make sure you're ready before starting.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard -->
+            <section id="dashboard" class="section-content">
+                <h2 class="section-title">
+                    <span>📊</span>
+                    <span>Dashboard</span>
+                </h2>
+                
+                <p>The Dashboard provides comprehensive insights into your learning progress and achievements.</p>
+                
+                <h3>Dashboard Sections:</h3>
+                <ul>
+                    <li><strong>Progress Overview:</strong> Overall completion percentage and letter mastery</li>
+                    <li><strong>Statistics:</strong> Accuracy, speed, and performance metrics</li>
+                    <li><strong>Recent Activity:</strong> Your latest practice sessions and achievements</li>
+                    <li><strong>Achievements:</strong> Unlocked badges and milestones</li>
+                    <li><strong>Quick Actions:</strong> Fast access to practice and exam modes</li>
+                </ul>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section id="troubleshooting" class="section-content">
+                <h2 class="section-title">
+                    <span>🔧</span>
+                    <span>Troubleshooting</span>
+                </h2>
+                
+                <h3>Common Issues and Solutions:</h3>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Camera not working or not detected</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <ul>
+                                <li>Check if your camera is connected and not being used by another application</li>
+                                <li>Ensure you've granted camera permissions to your browser</li>
+                                <li>Try refreshing the page and allowing camera access again</li>
+                                <li>Check your browser's privacy settings</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Sign recognition is not accurate</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <ul>
+                                <li>Ensure good lighting on your hands</li>
+                                <li>Keep your hands clearly visible in the camera frame</li>
+                                <li>Hold the sign position steady for 2-3 seconds</li>
+                                <li>Make sure your hands are not overlapping or partially hidden</li>
+                                <li>Try adjusting your camera angle or distance</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Page loading slowly or not responding</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <ul>
+                                <li>Check your internet connection</li>
+                                <li>Try refreshing the page</li>
+                                <li>Clear your browser cache and cookies</li>
+                                <li>Close other tabs or applications using bandwidth</li>
+                                <li>Try using a different browser</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Progress not saving</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <ul>
+                                <li>Ensure you're not using private/incognito browsing mode</li>
+                                <li>Check if your browser allows local storage</li>
+                                <li>Try refreshing the page and continuing your session</li>
+                                <li>Make sure you're completing the required number of attempts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Accessibility -->
+            <section id="accessibility" class="section-content">
+                <h2 class="section-title">
+                    <span>♿</span>
+                    <span>Accessibility Features</span>
+                </h2>
+                
+                <p>Our LMS is designed to be accessible to users with different abilities and needs.</p>
+                
+                <h3>Available Accessibility Features:</h3>
+                <ul>
+                    <li><strong>Keyboard Navigation:</strong> Full keyboard support for all functions</li>
+                    <li><strong>Screen Reader Support:</strong> Compatible with screen reading software</li>
+                    <li><strong>High Contrast Mode:</strong> Toggle for better visibility</li>
+                    <li><strong>Voice Commands:</strong> Speech recognition for navigation</li>
+                    <li><strong>Reduced Motion:</strong> Respects user motion preferences</li>
+                    <li><strong>Focus Management:</strong> Clear focus indicators and logical tab order</li>
+                </ul>
+
+                <div class="tip-box">
+                    <div class="tip-title">
+                        <span>💡</span>
+                        <span>Accessibility Tips</span>
+                    </div>
+                    <div class="tip-content">
+                        <ul>
+                            <li>Use Tab key to navigate through interactive elements</li>
+                            <li>Press Enter or Space to activate buttons and links</li>
+                            <li>Use arrow keys to navigate through letter grids and options</li>
+                            <li>Press Escape to close modals and overlays</li>
+                            <li>Look for the accessibility toggle buttons in the top-right corner</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <div class="contact-section">
+                <h3 class="contact-title">Still Need Help?</h3>
+                <p class="contact-description">
+                    If you can't find the answer to your question, we're here to help!
+                </p>
+                <div class="contact-buttons">
+                    <a href="mailto:support@sinhalasignlms.com" class="contact-button">
+                        📧 Email Support
+                    </a>
+                    <a href="#" class="contact-button" onclick="showFeedbackForm()">
+                        💬 Send Feedback
+                    </a>
+                    <a href="#" class="contact-button" onclick="showBugReport()">
+                        🐛 Report Bug
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                icon.classList.remove('rotated');
+            } else {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer.show').forEach(item => {
+                    item.classList.remove('show');
+                });
+                document.querySelectorAll('.faq-icon.rotated').forEach(item => {
+                    item.classList.remove('rotated');
+                });
+                
+                // Open current FAQ
+                answer.classList.add('show');
+                icon.classList.add('rotated');
+            }
+        }
+
+        function showFeedbackForm() {
+            alert('Feedback Form\n\nThank you for your interest in providing feedback!\n\nPlease email us at: support@sinhalasignlms.com\n\nInclude:\n• Your feedback or suggestions\n• What you liked or didn\'t like\n• Any specific features you\'d like to see\n• Your contact information (optional)');
+        }
+
+        function showBugReport() {
+            alert('Bug Report\n\nTo help us fix issues quickly, please include:\n\n• Description of the problem\n• Steps to reproduce the issue\n• Your browser and version\n• Screenshots if applicable\n• Any error messages\n\nEmail: support@sinhalasignlms.com\n\nWe appreciate your help in making the LMS better!');
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize accessibility features
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.accessibilityManager) {
+                window.accessibilityManager.announce('Help page loaded. Use Tab to navigate through sections.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,900 +1,636 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gesture Learning Quiz</title>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinhala Sign Language LMS - Learn Sinhala Signs with AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="design-system.css">
     <style>
-      /* Copy everything between the <style> tags from index.html and paste it here */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.container {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 1400px;
-  width: 100%;
-}
-
-h1 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 10px;
-  font-size: 2.5em;
-}
-
-.subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 30px;
-  font-size: 1.1em;
-}
-
-.quiz-header {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  padding: 25px;
-  border-radius: 15px;
-  margin-bottom: 30px;
-  color: white;
-  text-align: center;
-}
-
-.target-letter {
-  font-size: 5em;
-  font-weight: bold;
-  margin: 10px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  letter-spacing: 10px;
-}
-
-.quiz-instruction {
-  font-size: 1.3em;
-  margin-bottom: 10px;
-}
-
-.progress-bar-container {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  height: 30px;
-  margin-top: 15px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  background: linear-gradient(90deg, #fbbf24, #f59e0b);
-  height: 100%;
-  transition: width 0.5s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: white;
-}
-
-.main-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 30px;
-  margin-bottom: 20px;
-}
-
-.video-section {
-  position: relative;
-}
-
-.video-container {
-  position: relative;
-  background: #000;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-#videoElement {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-#canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.feedback-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(16, 185, 129, 0.95);
-  padding: 30px 50px;
-  border-radius: 20px;
-  font-size: 3em;
-  font-weight: bold;
-  color: white;
-  display: none;
-  animation: popIn 0.3s ease;
-  z-index: 10;
-}
-
-.feedback-overlay.show {
-  display: block;
-}
-
-.feedback-overlay.correct {
-  background: rgba(16, 185, 129, 0.95);
-}
-
-.feedback-overlay.incorrect {
-  background: rgba(239, 68, 68, 0.95);
-}
-
-@keyframes popIn {
-  0% {
-    transform: translate(-50%, -50%) scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-.prediction-display {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 15px;
-  color: white;
-  text-align: center;
-}
-
-.prediction-text {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.score-card {
-  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  color: white;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.score-card h3 {
-  margin-bottom: 15px;
-  font-size: 1.3em;
-}
-
-.score-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 1.1em;
-}
-
-.score-value {
-  font-weight: bold;
-  font-size: 1.3em;
-}
-
-.status-card {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.status-card h3 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 1.3em;
-}
-
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.1em;
-  color: #666;
-}
-
-.status-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-.status-dot.connected {
-  background: #4ade80;
-}
-
-.status-dot.disconnected {
-  background: #ef4444;
-  animation: none;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.attempts-list {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.attempts-list h3 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 1.3em;
-}
-
-.attempt-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #f3f4f6;
-  border-radius: 8px;
-}
-
-.attempt-letter {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.attempt-status {
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 0.9em;
-  font-weight: bold;
-}
-
-.attempt-status.correct {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.attempt-status.skipped {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 15px 35px;
-  font-size: 1.1em;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-#startButton {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-#startButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-}
-
-#stopButton {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-}
-
-#stopButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
-}
-
-#skipButton {
-  background: linear-gradient(135deg, #f59e0b, #f97316);
-  color: white;
-}
-
-#skipButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
-}
-
-#restartButton {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-}
-
-#restartButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.completion-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.completion-modal.show {
-  display: flex;
-}
-
-.modal-content {
-  background: white;
-  padding: 50px;
-  border-radius: 20px;
-  text-align: center;
-  max-width: 500px;
-  animation: popIn 0.5s ease;
-}
-
-.modal-content h2 {
-  font-size: 3em;
-  margin-bottom: 20px;
-  color: #10b981;
-}
-
-.modal-content .final-score {
-  font-size: 2em;
-  margin: 20px 0;
-  color: #333;
-}
-
-.modal-content button {
-  margin-top: 20px;
-}
-
-@media (max-width: 1024px) {
-  .main-content {
-    grid-template-columns: 1fr;
-  }
-}
-
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>🎓 Gesture Learning Quiz</h1>
-      <p class="subtitle">
-        Practice sign language gestures and test your skills!
-      </p>
-
-      <div class="quiz-header">
-        <div class="quiz-instruction">Show the gesture for:</div>
-        <div class="target-letter" id="targetLetter">-</div>
-        <div class="progress-bar-container">
-          <div class="progress-bar" id="progressBar" style="width: 0%">
-            <span id="progressText">0 / 0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="main-content">
-        <div class="video-section">
-          <div class="video-container">
-            <video id="videoElement" autoplay playsinline></video>
-            <canvas id="canvas"></canvas>
-            <div class="feedback-overlay" id="feedbackOverlay">✓ CORRECT!</div>
-            <div class="prediction-display">
-              <div class="prediction-text" id="predictionText">
-                Your gesture: ...
-              </div>
-              <div id="confidenceText">Confidence: 0.00</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar">
-          <div class="score-card">
-            <h3>📊 Your Score</h3>
-            <div class="score-item">
-              <span>Correct:</span>
-              <span class="score-value" id="correctCount">0</span>
-            </div>
-            <div class="score-item">
-              <span>Skipped:</span>
-              <span class="score-value" id="skippedCount">0</span>
-            </div>
-            <div class="score-item">
-              <span>Accuracy:</span>
-              <span class="score-value" id="accuracyPercent">0%</span>
-            </div>
-          </div>
-
-          <div class="status-card">
-            <h3>Connection</h3>
-            <div class="status-indicator">
-              <div class="status-dot disconnected" id="statusDot"></div>
-              <span id="statusText">Disconnected</span>
-            </div>
-          </div>
-
-          <div class="attempts-list">
-            <h3>📝 History</h3>
-            <div id="attemptsContainer">
-              <p style="text-align: center; color: #999">No attempts yet</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button id="startButton">Start Quiz</button>
-        <button id="skipButton" disabled>Skip Letter</button>
-        <button id="restartButton" disabled>Restart Quiz</button>
-        <button id="stopButton" disabled>Stop</button>
-      </div>
-    </div>
-
-    <div class="completion-modal" id="completionModal">
-      <div class="modal-content">
-        <h2>🎉 Quiz Complete!</h2>
-        <p class="final-score">Score: <strong id="finalScore">0/0</strong></p>
-        <p style="font-size: 1.2em; color: #666; margin: 10px 0">
-          Accuracy: <strong id="finalAccuracy">0%</strong>
-        </p>
-        <button id="modalRestartButton">Play Again</button>
-      </div>
-    </div>
-    <script>
-      // Copy everything between the <script> tags from index.html and paste it here
-const video = document.getElementById("videoElement");
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const startButton = document.getElementById("startButton");
-const stopButton = document.getElementById("stopButton");
-const skipButton = document.getElementById("skipButton");
-const restartButton = document.getElementById("restartButton");
-const targetLetter = document.getElementById("targetLetter");
-const predictionText = document.getElementById("predictionText");
-const confidenceText = document.getElementById("confidenceText");
-const statusDot = document.getElementById("statusDot");
-const statusText = document.getElementById("statusText");
-const feedbackOverlay = document.getElementById("feedbackOverlay");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
-const correctCount = document.getElementById("correctCount");
-const skippedCount = document.getElementById("skippedCount");
-const accuracyPercent = document.getElementById("accuracyPercent");
-const attemptsContainer = document.getElementById("attemptsContainer");
-const completionModal = document.getElementById("completionModal");
-const modalRestartButton = document.getElementById("modalRestartButton");
-
-let ws = null;
-let stream = null;
-let isProcessing = false;
-let frameInterval = 100;
-
-// Quiz state
-let actions = [];
-let currentIndex = 0;
-let correctAnswers = 0;
-let skippedAnswers = 0;
-let attempts = [];
-let consecutiveCorrect = 0;
-let isTransitioning = false; // New flag to prevent multiple counts
-const REQUIRED_CORRECT = 3; // Need 3 consecutive correct predictions
-
-// Fetch available actions from backend
-async function loadActions() {
-  try {
-    const response = await fetch("/actions");
-    const data = await response.json();
-    actions = data.actions.filter((a) => a !== "unknown"); // Remove 'unknown'
-    shuffleArray(actions);
-    updateQuizUI();
-  } catch (error) {
-    console.error("Failed to load actions:", error);
-  }
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function updateQuizUI() {
-  if (currentIndex < actions.length) {
-    targetLetter.textContent = actions[currentIndex];
-    const progress = (currentIndex / actions.length) * 100;
-    progressBar.style.width = progress + "%";
-    progressText.textContent = `${currentIndex} / ${actions.length}`;
-  } else {
-    showCompletionModal();
-  }
-}
-
-function updateScore() {
-  correctCount.textContent = correctAnswers;
-  skippedCount.textContent = skippedAnswers;
-  const total = correctAnswers + skippedAnswers;
-  const accuracy = total > 0 ? ((correctAnswers / total) * 100).toFixed(1) : 0;
-  accuracyPercent.textContent = accuracy + "%";
-}
-
-function addAttempt(letter, status) {
-  attempts.push({ letter, status });
-  updateAttemptsUI();
-}
-
-function updateAttemptsUI() {
-  if (attempts.length === 0) {
-    attemptsContainer.innerHTML =
-      '<p style="text-align: center; color: #999;">No attempts yet</p>';
-    return;
-  }
-
-  attemptsContainer.innerHTML = attempts
-    .slice()
-    .reverse()
-    .map(
-      (attempt) => `
-                <div class="attempt-item">
-                    <span class="attempt-letter">${attempt.letter}</span>
-                    <span class="attempt-status ${
-                      attempt.status
-                    }">${attempt.status.toUpperCase()}</span>
-                </div>
-            `
-    )
-    .join("");
-}
-
-function showFeedback(isCorrect) {
-  feedbackOverlay.className =
-    "feedback-overlay show " + (isCorrect ? "correct" : "incorrect");
-  feedbackOverlay.textContent = isCorrect ? "✓ CORRECT!" : "✗ TRY AGAIN";
-
-  setTimeout(() => {
-    feedbackOverlay.classList.remove("show");
-  }, 1000);
-}
-
-function nextLetter() {
-  consecutiveCorrect = 0;
-  isTransitioning = false; // Reset transition flag
-  currentIndex++;
-  updateQuizUI();
-}
-
-function skipLetter() {
-  if (isTransitioning) return; // Prevent skipping during transition
-  skippedAnswers++;
-  addAttempt(actions[currentIndex], "skipped");
-  updateScore();
-  showFeedback(false);
-  nextLetter();
-}
-
-function showCompletionModal() {
-  completionModal.classList.add("show");
-  document.getElementById(
-    "finalScore"
-  ).textContent = `${correctAnswers}/${actions.length}`;
-  const accuracy = ((correctAnswers / actions.length) * 100).toFixed(1);
-  document.getElementById("finalAccuracy").textContent = accuracy + "%";
-}
-
-function restartQuiz() {
-  currentIndex = 0;
-  correctAnswers = 0;
-  skippedAnswers = 0;
-  consecutiveCorrect = 0;
-  isTransitioning = false; // Reset transition flag
-  attempts = [];
-  shuffleArray(actions);
-  updateQuizUI();
-  updateScore();
-  updateAttemptsUI();
-  completionModal.classList.remove("show");
-}
-
-// WebSocket connection
-function connectWebSocket() {
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  ws = new WebSocket(`${protocol}//${window.location.host}/ws/predict`);
-
-  ws.onopen = () => {
-    statusDot.className = "status-dot connected";
-    statusText.textContent = "Connected";
-    console.log("✅ WebSocket connected");
-  };
-
-  ws.onclose = () => {
-    statusDot.className = "status-dot disconnected";
-    statusText.textContent = "Disconnected";
-    console.log("🔌 WebSocket disconnected");
-  };
-
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    isProcessing = false;
-
-    const currentTarget = actions[currentIndex];
-
-    // Update display
-    if (data.detected) {
-      predictionText.textContent = `Your gesture: ${data.prediction}`;
-      confidenceText.textContent = `Confidence: ${data.confidence.toFixed(2)}`;
-
-      // Only process if we're not transitioning to next letter
-      if (!isTransitioning) {
-        // Check if prediction matches target
-        if (data.prediction === currentTarget && data.confidence > 0.7) {
-          consecutiveCorrect++;
-
-          if (consecutiveCorrect >= REQUIRED_CORRECT) {
-            // Set transitioning flag to prevent multiple counts
-            isTransitioning = true;
-
-            // Correct answer!
-            correctAnswers++;
-            addAttempt(currentTarget, "correct");
-            updateScore();
-            showFeedback(true);
-
-            setTimeout(() => {
-              nextLetter();
-            }, 1500);
-          }
-        } else {
-          consecutiveCorrect = 0; // Reset if wrong
+        body {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+            min-height: 100vh;
+            font-family: var(--font-family-sinhala);
         }
-      }
-    } else {
-      predictionText.textContent = "Your gesture: ...";
-      confidenceText.textContent = `Confidence: ${data.confidence.toFixed(2)}`;
-      if (!isTransitioning) {
-        consecutiveCorrect = 0;
-      }
-    }
 
-    // Draw landmarks
-    if (data.landmarks) {
-      drawLandmarks(data.landmarks);
-    }
-  };
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--neutral-200);
+        }
 
-  ws.onerror = (error) => {
-    console.error("❌ WebSocket error:", error);
-  };
-}
+        .navbar-brand {
+            font-weight: var(--font-bold);
+            color: var(--primary-700) !important;
+            font-size: var(--text-xl);
+        }
 
-function drawLandmarks(landmarks) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+        .nav-link {
+            font-weight: var(--font-medium);
+            color: var(--neutral-600) !important;
+            transition: color var(--transition-fast);
+        }
 
-  // Draw pose
-  if (landmarks.pose) {
-    drawConnections(
-      landmarks.pose,
-      [
-        [11, 13],
-        [13, 15],
-        [12, 14],
-        [14, 16],
-        [11, 12],
-        [11, 23],
-        [12, 24],
-        [23, 24],
-      ],
-      "#5056EE",
-      3
-    );
-  }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-600) !important;
+        }
 
-  // Draw hands
-  const handConnections = [
-    [0, 1],
-    [1, 2],
-    [2, 3],
-    [3, 4],
-    [0, 5],
-    [5, 6],
-    [6, 7],
-    [7, 8],
-    [0, 9],
-    [9, 10],
-    [10, 11],
-    [11, 12],
-    [0, 13],
-    [13, 14],
-    [14, 15],
-    [15, 16],
-    [0, 17],
-    [17, 18],
-    [18, 19],
-    [19, 20],
-    [5, 9],
-    [9, 13],
-    [13, 17],
-  ];
+        .hero-section {
+            padding: var(--space-20) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-  if (landmarks.left_hand) {
-    drawConnections(landmarks.left_hand, handConnections, "#FF1493", 2);
-  }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
 
-  if (landmarks.right_hand) {
-    drawConnections(landmarks.right_hand, handConnections, "#FF6347", 2);
-  }
-}
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, -30px) rotate(180deg); }
+        }
 
-function drawConnections(points, connections, color, lineWidth) {
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
 
-  connections.forEach(([start, end]) => {
-    if (points[start] && points[end]) {
-      ctx.beginPath();
-      ctx.moveTo(
-        points[start][0] * canvas.width,
-        points[start][1] * canvas.height
-      );
-      ctx.lineTo(points[end][0] * canvas.width, points[end][1] * canvas.height);
-      ctx.stroke();
-    }
-  });
+        .hero-title {
+            font-size: var(--text-6xl);
+            font-weight: var(--font-bold);
+            color: var(--neutral-800);
+            margin-bottom: var(--space-4);
+            animation: fadeIn 1s ease-out;
+        }
 
-  ctx.fillStyle = color;
-  points.forEach((point) => {
-    ctx.beginPath();
-    ctx.arc(
-      point[0] * canvas.width,
-      point[1] * canvas.height,
-      4,
-      0,
-      2 * Math.PI
-    );
-    ctx.fill();
-  });
-}
+        .hero-subtitle {
+            font-size: var(--text-xl);
+            color: var(--neutral-600);
+            margin-bottom: var(--space-8);
+            animation: slideUp 1.2s ease-out;
+        }
 
-async function startDetection() {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        width: { ideal: 640 },
-        height: { ideal: 480 },
-        frameRate: { ideal: 30 },
-      },
-    });
-    video.srcObject = stream;
+        .hero-description {
+            font-size: var(--text-lg);
+            color: var(--neutral-500);
+            margin-bottom: var(--space-8);
+            line-height: 1.7;
+            animation: slideUp 1.4s ease-out;
+        }
 
-    video.onloadedmetadata = () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-    };
+        .cta-buttons {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-12);
+            animation: slideUp 1.6s ease-out;
+        }
 
-    connectWebSocket();
-    sendFrames();
+        .cta-button {
+            padding: var(--space-4) var(--space-8);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            border-radius: var(--radius-2xl);
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            min-width: 200px;
+            justify-content: center;
+        }
 
-    startButton.disabled = true;
-    stopButton.disabled = false;
-    skipButton.disabled = false;
-    restartButton.disabled = false;
-  } catch (error) {
-    console.error("❌ Error accessing camera:", error);
-    alert("Could not access camera. Please check permissions.");
-  }
-}
+        .cta-primary {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+            color: white;
+            border: none;
+        }
 
-function sendFrames() {
-  setInterval(() => {
-    if (!ws || ws.readyState !== WebSocket.OPEN || isProcessing) {
-      return;
-    }
+        .cta-primary:hover {
+            background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            color: white;
+            text-decoration: none;
+        }
 
-    isProcessing = true;
+        .cta-secondary {
+            background: white;
+            color: var(--primary-600);
+            border: 2px solid var(--primary-600);
+        }
 
-    const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = 320;
-    tempCanvas.height = 240;
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCtx.drawImage(video, 0, 0, 320, 240);
+        .cta-secondary:hover {
+            background: var(--primary-600);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            text-decoration: none;
+        }
 
-    const imageData = tempCanvas.toDataURL("image/jpeg", 0.5);
-    ws.send(JSON.stringify({ image: imageData }));
-  }, frameInterval);
-}
+        .features-section {
+            padding: var(--space-16) 0;
+            background: white;
+        }
 
-function stopDetection() {
-  if (stream) {
-    stream.getTracks().forEach((track) => track.stop());
-    stream = null;
-  }
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
 
-  if (ws) {
-    ws.close();
-    ws = null;
-  }
+        .features-title {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--neutral-800);
+            text-align: center;
+            margin-bottom: var(--space-4);
+        }
 
-  isProcessing = false;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+        .features-subtitle {
+            font-size: var(--text-lg);
+            color: var(--neutral-600);
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
 
-  startButton.disabled = false;
-  stopButton.disabled = true;
-  skipButton.disabled = true;
-  restartButton.disabled = true;
-}
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-8);
+        }
 
-// Event listeners
-startButton.addEventListener("click", startDetection);
-stopButton.addEventListener("click", stopDetection);
-skipButton.addEventListener("click", skipLetter);
-restartButton.addEventListener("click", restartQuiz);
-modalRestartButton.addEventListener("click", () => {
-  restartQuiz();
-  if (!stream) {
-    startDetection();
-  }
-});
+        .feature-card {
+            text-align: center;
+            padding: var(--space-8);
+            border-radius: var(--radius-2xl);
+            background: var(--neutral-50);
+            border: 1px solid var(--neutral-200);
+            transition: all var(--transition-normal);
+        }
 
-// Load actions on page load
-loadActions();
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            background: white;
+        }
 
+        .feature-icon {
+            font-size: var(--text-5xl);
+            margin-bottom: var(--space-4);
+        }
+
+        .feature-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--neutral-800);
+            margin-bottom: var(--space-3);
+        }
+
+        .feature-description {
+            font-size: var(--text-base);
+            color: var(--neutral-600);
+            line-height: 1.6;
+        }
+
+        .stats-section {
+            padding: var(--space-16) 0;
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+            color: white;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-8);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--text-5xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+        }
+
+        .how-it-works {
+            padding: var(--space-16) 0;
+            background: var(--neutral-50);
+        }
+
+        .how-it-works-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .how-it-works-title {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--neutral-800);
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-8);
+        }
+
+        .step-card {
+            text-align: center;
+            padding: var(--space-6);
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: all var(--transition-normal);
+        }
+
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            margin: 0 auto var(--space-4);
+        }
+
+        .step-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--neutral-800);
+            margin-bottom: var(--space-3);
+        }
+
+        .step-description {
+            font-size: var(--text-base);
+            color: var(--neutral-600);
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: var(--neutral-800);
+            color: white;
+            padding: var(--space-12) 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .footer-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+        }
+
+        .footer-description {
+            font-size: var(--text-base);
+            opacity: 0.8;
+            margin-bottom: var(--space-6);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-6);
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            font-weight: var(--font-medium);
+            transition: color var(--transition-fast);
+        }
+
+        .footer-link:hover {
+            color: var(--primary-400);
+            text-decoration: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: var(--text-4xl);
+            }
+            
+            .hero-subtitle {
+                font-size: var(--text-lg);
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: var(--space-3);
+            }
+        }
+
+        /* Accessibility */
+        .cta-button:focus {
+            outline: 3px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+
+        .footer-link:focus {
+            outline: 2px solid var(--primary-400);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-sinhala">🤟 සිංහල අත් ලකුණු LMS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html" aria-current="page">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="practice.html">Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="exam.html">Exam</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title text-sinhala">Learn Sinhala Sign Language</h1>
+            <p class="hero-subtitle">Master Sinhala signs with AI-powered recognition and interactive learning</p>
+            <p class="hero-description">
+                Experience the future of sign language learning with our advanced AI system. 
+                Practice Sinhala signs using your webcam and get real-time feedback to improve your skills.
+            </p>
+            <div class="cta-buttons">
+                <a href="practice.html" class="cta-button cta-primary">
+                    <span>🎯</span>
+                    <span>Start Learning</span>
+                </a>
+                <a href="dashboard.html" class="cta-button cta-secondary">
+                    <span>📊</span>
+                    <span>View Progress</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <h2 class="features-title text-sinhala">Why Choose Our LMS?</h2>
+            <p class="features-subtitle">Advanced features designed for effective sign language learning</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">AI-Powered Recognition</h3>
+                    <p class="feature-description">
+                        Advanced machine learning algorithms provide accurate real-time sign recognition 
+                        using your webcam for instant feedback.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Structured Learning</h3>
+                    <p class="feature-description">
+                        Follow a carefully designed curriculum that progresses from basic to advanced 
+                        Sinhala signs with guided practice sessions.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Progress Tracking</h3>
+                    <p class="feature-description">
+                        Monitor your learning journey with detailed analytics, achievements, 
+                        and personalized insights to stay motivated.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Interactive Practice</h3>
+                    <p class="feature-description">
+                        Engage with gamified practice sessions that make learning fun and 
+                        help you master each sign through repetition and feedback.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">Assessment Tests</h3>
+                    <p class="feature-description">
+                        Test your knowledge with timed exams and get detailed results 
+                        to identify areas for improvement.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">♿</div>
+                    <h3 class="feature-title">Accessible Design</h3>
+                    <p class="feature-description">
+                        Built with accessibility in mind, supporting screen readers, 
+                        keyboard navigation, and high contrast modes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">10+</span>
+                    <span class="stat-label">Sinhala Letters</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">AI Accuracy</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">24/7</span>
+                    <span class="stat-label">Available</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">Free</span>
+                    <span class="stat-label">To Use</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="how-it-works-container">
+            <h2 class="how-it-works-title text-sinhala">How It Works</h2>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Enable Camera</h3>
+                    <p class="step-description">
+                        Allow access to your webcam to start the sign recognition system. 
+                        Your privacy is protected - all processing happens locally.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Practice Signs</h3>
+                    <p class="step-description">
+                        Follow the guided practice sessions to learn each Sinhala sign. 
+                        Get real-time feedback and tips for improvement.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Take Tests</h3>
+                    <p class="step-description">
+                        Test your knowledge with interactive exams and track your progress 
+                        through detailed analytics and achievements.
+                    </p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Master Skills</h3>
+                    <p class="step-description">
+                        Continue practicing to achieve mastery and unlock advanced features 
+                        as you progress through the learning journey.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title text-sinhala">සිංහල අත් ලකුණු LMS</h3>
+            <p class="footer-description">
+                Empowering communication through technology. Learn Sinhala sign language 
+                with the most advanced AI-powered learning system.
+            </p>
+            <div class="footer-links">
+                <a href="practice.html" class="footer-link">Practice</a>
+                <a href="exam.html" class="footer-link">Exam</a>
+                <a href="dashboard.html" class="footer-link">Dashboard</a>
+                <a href="#" class="footer-link" onclick="showHelp()">Help</a>
+                <a href="#" class="footer-link" onclick="showAbout()">About</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="accessibility.js"></script>
+    <script src="performance.js"></script>
+    <script>
+        function showHelp() {
+            alert('Help & Support\n\n• Practice Mode: Learn signs with guided exercises\n• Exam Mode: Test your knowledge with timed assessments\n• Dashboard: Track your progress and achievements\n• Use your webcam for sign recognition\n• Ensure good lighting for best results');
+        }
+
+        function showAbout() {
+            alert('About Sinhala Sign Language LMS\n\nThis is an AI-powered learning management system designed to help users learn Sinhala sign language through interactive practice and assessment.\n\nFeatures:\n• Real-time sign recognition\n• Progress tracking\n• Gamified learning\n• Accessibility support\n• Mobile responsive design');
+        }
+
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
-  </body>
+</body>
 </html>

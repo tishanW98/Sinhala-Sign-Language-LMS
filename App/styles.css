@@ -1,0 +1,11 @@
+body {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+}
+
+h1, h2, p {
+    text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+}

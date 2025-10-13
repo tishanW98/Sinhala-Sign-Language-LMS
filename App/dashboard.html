@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Sinhala Sign Language LMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+/* Dashboard Specific Styles */
+body {
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+    min-height: 100vh;
+    font-family: var(--font-family-sinhala);
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.navbar-brand {
+    font-weight: var(--font-bold);
+    color: var(--primary-700) !important;
+    font-size: var(--text-xl);
+}
+
+.nav-link {
+    font-weight: var(--font-medium);
+    color: var(--neutral-600) !important;
+    transition: color var(--transition-fast);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-600) !important;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-6);
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.dashboard-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-2);
+}
+
+.dashboard-subtitle {
+    font-size: var(--text-lg);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-6);
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-xl);
+    margin-bottom: var(--space-6);
+    animation: slideUp 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-20px, -20px) rotate(180deg); }
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-2);
+}
+
+.welcome-subtitle {
+    font-size: var(--text-lg);
+    opacity: 0.9;
+    margin-bottom: var(--space-4);
+}
+
+.welcome-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+}
+
+.welcome-stat {
+    text-align: center;
+    padding: var(--space-3);
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(10px);
+}
+
+.welcome-stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    display: block;
+}
+
+.welcome-stat-label {
+    font-size: var(--text-sm);
+    opacity: 0.8;
+    margin-top: var(--space-1);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.progress-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.8s ease-out;
+}
+
+.section-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.overall-progress {
+    margin-bottom: var(--space-6);
+}
+
+.progress-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-full);
+    background: conic-gradient(var(--primary-500) 0deg, var(--primary-500) 0deg, var(--neutral-200) 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+    position: relative;
+}
+
+.progress-circle::before {
+    content: '';
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: white;
+    position: absolute;
+}
+
+.progress-percentage {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--primary-600);
+    z-index: 1;
+}
+
+.progress-label {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-4);
+}
+
+.letter-progress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.letter-progress-item {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--neutral-100);
+    border: 2px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    position: relative;
+    transition: all var(--transition-normal);
+}
+
+.letter-progress-item.completed {
+    background: var(--success-500);
+    color: white;
+    border-color: var(--success-600);
+}
+
+.letter-progress-item.in-progress {
+    background: var(--warning-500);
+    color: white;
+    border-color: var(--warning-600);
+}
+
+.letter-progress-item.not-started {
+    background: var(--neutral-200);
+    color: var(--neutral-500);
+    border-color: var(--neutral-300);
+}
+
+.letter-progress-item.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: var(--text-xs);
+    background: rgba(255,255,255,0.9);
+    color: var(--success-600);
+    border-radius: var(--radius-full);
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 1s ease-out;
+}
+
+.stats-grid {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.stat-card {
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.stat-icon {
+    font-size: var(--text-xl);
+}
+
+.stat-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+}
+
+.stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-800);
+    display: block;
+}
+
+.stat-change {
+    font-size: var(--text-xs);
+    margin-top: var(--space-1);
+}
+
+.stat-change.positive {
+    color: var(--success-600);
+}
+
+.stat-change.negative {
+    color: var(--error-600);
+}
+
+.activity-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-6);
+    animation: slideUp 1.2s ease-out;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-2);
+    transition: all var(--transition-normal);
+}
+
+.activity-item:hover {
+    background: var(--neutral-50);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+}
+
+.activity-icon.practice {
+    background: var(--primary-100);
+    color: var(--primary-600);
+}
+
+.activity-icon.exam {
+    background: var(--error-100);
+    color: var(--error-600);
+}
+
+.activity-icon.achievement {
+    background: var(--success-100);
+    color: var(--success-600);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-1);
+}
+
+.activity-description {
+    font-size: var(--text-xs);
+    color: var(--neutral-600);
+}
+
+.activity-time {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    flex-shrink: 0;
+}
+
+.achievements-section {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--space-6);
+    animation: slideUp 1.4s ease-out;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.achievement-card {
+    text-align: center;
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--neutral-200);
+    transition: all var(--transition-normal);
+}
+
+.achievement-card.earned {
+    background: linear-gradient(135deg, var(--success-50) 0%, var(--success-100) 100%);
+    border-color: var(--success-300);
+    transform: scale(1.02);
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.achievement-icon {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-2);
+}
+
+.achievement-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-1);
+}
+
+.achievement-description {
+    font-size: var(--text-xs);
+    color: var(--neutral-600);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.quick-action-card {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action-icon {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-3);
+}
+
+.quick-action-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+    margin-bottom: var(--space-2);
+}
+
+.quick-action-description {
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .welcome-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: var(--space-4);
+    }
+    
+    .dashboard-title {
+        font-size: var(--text-3xl);
+    }
+    
+    .welcome-card {
+        padding: var(--space-6);
+    }
+    
+    .welcome-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .letter-progress-grid {
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    }
+    
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.quick-action-card:focus {
+    outline: 3px solid var(--primary-500);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .letter-progress-item {
+        border-width: 3px;
+    }
+    
+    .achievement-card {
+        border-width: 3px;
+    }
+}
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-sinhala">🤟 සිංහල අත් ලකුණු LMS</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="practice.html">Practice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="exam.html">Exam</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html" aria-current="page">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container" style="margin-top: 80px;">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title text-sinhala">📊 Dashboard</h1>
+            <p class="dashboard-subtitle">Track your progress and achievements in learning Sinhala sign language</p>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <div class="welcome-content">
+                <h2 class="welcome-title text-sinhala">Welcome back, Learner! 👋</h2>
+                <p class="welcome-subtitle">Keep up the great work! You're making excellent progress.</p>
+                <div class="welcome-stats">
+                    <div class="welcome-stat">
+                        <span class="welcome-stat-value" id="total-time">2h 30m</span>
+                        <span class="welcome-stat-label">Total Time</span>
+                    </div>
+                    <div class="welcome-stat">
+                        <span class="welcome-stat-value" id="streak-days">7</span>
+                        <span class="welcome-stat-label">Day Streak</span>
+                    </div>
+                    <div class="welcome-stat">
+                        <span class="welcome-stat-value" id="level">3</span>
+                        <span class="welcome-stat-label">Current Level</span>
+                    </div>
+                    <div class="welcome-stat">
+                        <span class="welcome-stat-value" id="xp-points">1,250</span>
+                        <span class="welcome-stat-label">XP Points</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Progress Section -->
+            <div class="progress-section">
+                <h3 class="section-title">
+                    <span>📈</span>
+                    <span class="text-sinhala">Learning Progress</span>
+                </h3>
+                
+                <div class="overall-progress">
+                    <div class="progress-circle" id="progress-circle">
+                        <span class="progress-percentage" id="progress-percentage">65%</span>
+                    </div>
+                    <div class="progress-label">Overall Completion</div>
+                </div>
+                
+                <div class="letter-progress-grid" id="letter-progress-grid">
+                    <!-- Letter progress items will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <h3 class="section-title">
+                    <span>📊</span>
+                    <span>Statistics</span>
+                </h3>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">🎯</span>
+                            <span class="stat-title">Accuracy</span>
+                        </div>
+                        <span class="stat-value" id="accuracy-stat">87%</span>
+                        <div class="stat-change positive">+5% this week</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">⚡</span>
+                            <span class="stat-title">Speed</span>
+                        </div>
+                        <span class="stat-value" id="speed-stat">2.3s</span>
+                        <div class="stat-change positive">-0.2s faster</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">🏆</span>
+                            <span class="stat-title">Exams Passed</span>
+                        </div>
+                        <span class="stat-value" id="exams-stat">3/5</span>
+                        <div class="stat-change positive">+1 this week</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">🔥</span>
+                            <span class="stat-title">Best Streak</span>
+                        </div>
+                        <span class="stat-value" id="streak-stat">12</span>
+                        <div class="stat-change">signs in a row</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="practice.html" class="quick-action-card">
+                <div class="quick-action-icon">🎯</div>
+                <h4 class="quick-action-title text-sinhala">Practice Mode</h4>
+                <p class="quick-action-description">Continue practicing with guided exercises</p>
+            </a>
+            
+            <a href="exam.html" class="quick-action-card">
+                <div class="quick-action-icon">📝</div>
+                <h4 class="quick-action-title text-sinhala">Take Exam</h4>
+                <p class="quick-action-description">Test your knowledge with timed assessments</p>
+            </a>
+            
+            <a href="#" class="quick-action-card" onclick="showSettings()">
+                <div class="quick-action-icon">⚙️</div>
+                <h4 class="quick-action-title">Settings</h4>
+                <p class="quick-action-description">Customize your learning experience</p>
+            </a>
+            
+            <a href="#" class="quick-action-card" onclick="showHelp()">
+                <div class="quick-action-icon">❓</div>
+                <h4 class="quick-action-title">Help & Support</h4>
+                <p class="quick-action-description">Get help and learn how to use the system</p>
+            </a>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <h3 class="section-title">
+                <span>🕒</span>
+                <span>Recent Activity</span>
+            </h3>
+            
+            <ul class="activity-list" id="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon practice">🎯</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed letter "අ" practice</div>
+                        <div class="activity-description">3/3 attempts successful</div>
+                    </div>
+                    <div class="activity-time">2 hours ago</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon exam">📝</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Passed Level 2 Exam</div>
+                        <div class="activity-description">Score: 85% (8/10 correct)</div>
+                    </div>
+                    <div class="activity-time">1 day ago</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon achievement">🏆</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Earned "Speed Demon" achievement</div>
+                        <div class="activity-description">Completed 5 signs in under 10 seconds</div>
+                    </div>
+                    <div class="activity-time">2 days ago</div>
+                </li>
+                
+                <li class="activity-item">
+                    <div class="activity-icon practice">🎯</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Practiced letter "ආ"</div>
+                        <div class="activity-description">2/3 attempts successful</div>
+                    </div>
+                    <div class="activity-time">3 days ago</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Achievements -->
+        <div class="achievements-section">
+            <h3 class="section-title">
+                <span>🏆</span>
+                <span>Achievements</span>
+            </h3>
+            
+            <div class="achievements-grid" id="achievements-grid">
+                <div class="achievement-card earned">
+                    <div class="achievement-icon">🎯</div>
+                    <h5 class="achievement-title">First Steps</h5>
+                    <p class="achievement-description">Complete your first practice session</p>
+                </div>
+                
+                <div class="achievement-card earned">
+                    <div class="achievement-icon">⚡</div>
+                    <h5 class="achievement-title">Speed Demon</h5>
+                    <p class="achievement-description">Complete 5 signs in under 10 seconds</p>
+                </div>
+                
+                <div class="achievement-card earned">
+                    <div class="achievement-icon">🎓</div>
+                    <h5 class="achievement-title">Scholar</h5>
+                    <p class="achievement-description">Pass your first exam</p>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon">🔥</div>
+                    <h5 class="achievement-title">Streak Master</h5>
+                    <p class="achievement-description">Maintain a 7-day practice streak</p>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon">🎯</div>
+                    <h5 class="achievement-title">Perfectionist</h5>
+                    <p class="achievement-description">Achieve 100% accuracy in an exam</p>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon">🌟</div>
+                    <h5 class="achievement-title">Master</h5>
+                    <p class="achievement-description">Complete all letters with 90%+ accuracy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="accessibility.js"></script>
+    <script src="performance.js"></script>
+    <script>
+        // Dashboard JavaScript
+        const letters = ['අ', 'ආ', 'ඇ', 'ඈ', 'එ', 'ඒ', 'ඉ', 'ඊ', 'උ', 'ඌ'];
+        
+        // Mock data - in a real app, this would come from a backend
+        const dashboardData = {
+            overallProgress: 65,
+            letterProgress: {
+                'අ': 'completed',
+                'ආ': 'completed', 
+                'ඇ': 'in-progress',
+                'ඈ': 'in-progress',
+                'එ': 'not-started',
+                'ඒ': 'not-started',
+                'ඉ': 'not-started',
+                'ඊ': 'not-started',
+                'උ': 'not-started',
+                'ඌ': 'not-started'
+            },
+            stats: {
+                accuracy: 87,
+                speed: 2.3,
+                examsPassed: 3,
+                bestStreak: 12
+            },
+            achievements: [
+                { id: 'first-steps', earned: true },
+                { id: 'speed-demon', earned: true },
+                { id: 'scholar', earned: true },
+                { id: 'streak-master', earned: false },
+                { id: 'perfectionist', earned: false },
+                { id: 'master', earned: false }
+            ]
+        };
+
+        function initializeDashboard() {
+            updateProgressCircle();
+            renderLetterProgress();
+            updateStats();
+            renderAchievements();
+        }
+
+        function updateProgressCircle() {
+            const progress = dashboardData.overallProgress;
+            const circle = document.getElementById('progress-circle');
+            const percentage = document.getElementById('progress-percentage');
+            
+            const degrees = (progress / 100) * 360;
+            circle.style.background = `conic-gradient(var(--primary-500) 0deg, var(--primary-500) ${degrees}deg, var(--neutral-200) ${degrees}deg)`;
+            percentage.textContent = progress + '%';
+        }
+
+        function renderLetterProgress() {
+            const grid = document.getElementById('letter-progress-grid');
+            grid.innerHTML = '';
+            
+            letters.forEach(letter => {
+                const item = document.createElement('div');
+                item.className = 'letter-progress-item';
+                item.textContent = letter;
+                
+                const status = dashboardData.letterProgress[letter];
+                item.classList.add(status);
+                
+                if (status === 'completed') {
+                    item.title = `${letter} - Completed ✓`;
+                } else if (status === 'in-progress') {
+                    item.title = `${letter} - In Progress`;
+                } else {
+                    item.title = `${letter} - Not Started`;
+                }
+                
+                grid.appendChild(item);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('accuracy-stat').textContent = dashboardData.stats.accuracy + '%';
+            document.getElementById('speed-stat').textContent = dashboardData.stats.speed + 's';
+            document.getElementById('exams-stat').textContent = dashboardData.stats.examsPassed + '/5';
+            document.getElementById('streak-stat').textContent = dashboardData.stats.bestStreak;
+        }
+
+        function renderAchievements() {
+            const grid = document.getElementById('achievements-grid');
+            const cards = grid.querySelectorAll('.achievement-card');
+            
+            cards.forEach((card, index) => {
+                const achievement = dashboardData.achievements[index];
+                if (achievement && achievement.earned) {
+                    card.classList.add('earned');
+                } else {
+                    card.classList.remove('earned');
+                }
+            });
+        }
+
+        function showSettings() {
+            alert('Settings panel would open here. This would include:\n\n• Audio/Visual preferences\n• Difficulty settings\n• Notification preferences\n• Language settings\n• Accessibility options');
+        }
+
+        function showHelp() {
+            alert('Help & Support would open here. This would include:\n\n• User guide\n• FAQ\n• Video tutorials\n• Contact support\n• Keyboard shortcuts\n• Accessibility help');
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>
